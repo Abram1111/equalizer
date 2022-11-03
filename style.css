@@ -1,0 +1,152 @@
+.block-container.css-12oz5g7.egzxvld2 {
+    max-width: 90%;
+    padding: 0;
+    margin-top: 5%;
+
+}
+
+.css-u8hs99.exg6vvm14 {
+    display: none;
+}
+
+[data-testid="stFileUploadDropzone"] {
+    background-color: transparent;
+    padding: 0;
+    max-width: 150px;
+}
+
+[data-testid="stFileUploadDropzone"] button {
+    font-size: auto;
+    font-weight: 500;
+    margin-left: 10px;
+}
+
+[data-testid="stFileUploader"] {
+    margin-top: 11px;
+}
+
+[data-testid="stFileUploader"] label {
+    display: none;
+}
+
+.row-widget.stRadio .css-k3w14i.effi0qh3 {
+    display: none;
+}
+
+.row-widget.stRadio .css-81oif8.effi0qh3 {
+    display: none;
+}
+
+
+[role="radiogroup"] {
+    margin-top: 15px;
+
+}
+
+/* @media (max-width:1000px) {
+    [role="radiogroup"] {
+        margin-left: -5%;
+    }
+
+}
+
+@media (max-width:800px) {
+    [role="radiogroup"] {
+        margin-left: 0;
+    }
+
+} */
+
+.row-widget.stRadio label:not(:last-of-type) {
+    margin-right: auto;
+}
+
+.css-1lsmgbg.egzxvld0 {
+    display: none;
+}
+
+
+
+@media (max-width:805px) {
+
+
+    [data-testid="stFileUploadDropzone"] button {
+        font-size: 15px;
+        font-weight: 300;
+
+    }
+}
+
+@media (max-width:765px) {
+
+
+    [data-testid="stFileUploadDropzone"] button {
+        font-size: 13px;
+        font-weight: 200;
+
+    }
+}
+
+@media (max-width:650px) {
+
+
+    [data-testid="stFileUploadDropzone"] button {
+        font-size: 13px;
+        font-weight: 200;
+        margin-top: 10px;
+
+    }
+
+    .row-widget.stRadio label {
+        margin-left: 10px;
+    }
+}
+
+
+/* 
+.stSlider {
+    transform: rotate(90deg);
+    margin-top: 50px;
+    margin-left: 25px;
+
+}
+
+
+[data-baseweb="slider"] {
+    width: 200px;
+
+}
+
+[role="slider"] {
+    display: none;
+}
+
+[data-baseweb="slider"] :first-child {
+    height: 15px;
+}
+
+[data-testid="stTickBarMin"] {
+    transform: rotate(-90deg);
+}
+
+[data-testid="stTickBarMax"] {
+    transform: rotate(-90deg);
+}
+
+[data-testid="stTickBar"] {
+    margin-top: -24px;
+    margin-left: -3px;
+    margin-right: 5px;
+
+} */
+footer {
+    display: none;
+}
+
+* {
+    user-select: none;
+}
+
+[data-testid="stMarkdownContainer"] p{
+    margin-left: 10px;
+}
