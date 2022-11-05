@@ -28,7 +28,7 @@ def fourier_transform(df,sliders ):
     figure, (axis1,axis2) = plt.subplots(2)
     plt.subplots_adjust(hspace=1)
 
-    # Frequency domain representation
+    # Time domain representation
     axis1.set_title('Fourier transform depicting the frequency components')
     axis1.plot(abs(frequancy_fourier_transform) )
     axis1.set_xlabel('Frequency')
