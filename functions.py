@@ -7,6 +7,9 @@ import streamlit_vertical_slider  as svs
 from scipy.io import wavfile as wav
 from scipy.fftpack import fft
 from scipy.fft import fft, fftfreq, fftshift
+from scipy.fft import irfft
+from scipy.fft import rfft, rfftfreq
+
 
 
 
@@ -59,3 +62,29 @@ def creating_sliders(names_list,label):
     return sliders_values
 ############################ Plotting ######################################################################
 
+
+
+
+
+#  --------------------------   FOURIER TRANSFORM FOR  Wave       ----------------------------------------
+def   fourierTansformWave(audio=[] , sampfreq=440010):
+    try:
+        audio = audio[: ,1]
+    except:
+        audio = audio[:]
+
+
+    #  Fourier transform 
+    fourier_transform_magnitude = rfft(audio)
+    fourier_transform_freq = rfftfreq(len(audio), 1 / sampfreq)
+  
+    return fourier_transform_magnitude , fourier_transform_freq
+
+
+# ------------------------------------------  modify_wave   ------------------------------------
+
+def  modify_wave (magnitude=[], numPoints=0 , startIndex=0 , scalerNumber=1):
+    
+    for i in range(numPoints):
+        magnitude[startIndex+i]=  (magnitude[startIndex+i]*scalerNumber)
+    return magnitude
