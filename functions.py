@@ -9,6 +9,7 @@ from scipy.fftpack import fft
 from scipy.fft import fft, fftfreq, fftshift
 from scipy.fft import irfft
 from scipy.fft import rfft, rfftfreq
+import plotly.express as px
 
 
 
@@ -88,3 +89,22 @@ def  modify_wave (magnitude=[], numPoints=0 , startIndex=0 , scalerNumber=1):
     for i in range(numPoints):
         magnitude[startIndex+i]=  (magnitude[startIndex+i]*scalerNumber)
     return magnitude
+
+
+
+# --------------------------------------------- bands -------------------------------------------
+def bandLength(freq=[]):
+    length_band=len(freq)/10
+    arr=np.zeros(10)
+    for i in range(10):
+        arr[i] =int (i*length_band)
+        
+    return arr  , len(freq)/10
+
+# ------------------------------------------------------ reconstruction signal -----------------------------------
+
+def reconstruct(signal=[] , sampleRate=0):
+        time =np.arange(0,len(signal)/sampleRate,1/sampleRate)
+        fig =px.line(x=time,y=signal)
+        st.plotly_chart(fig ,use_container_width=True)
+
