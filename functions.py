@@ -10,40 +10,54 @@ from scipy.fft import fft, fftfreq, fftshift
 from scipy.fft import irfft
 from scipy.fft import rfft, rfftfreq
 import plotly.express as px
+import matplotlib as mpl
+from scipy import signal
 
-
-
-
-#  ----------------------------------- FOURIER TRANSFORM FUNCTION ---------------------------------------------------
-def fourier_transform(df,sliders ):
+#  ----------------------------------- ECG ---------------------------------------------------
+def ECG(df,sliders ):
     # Getting df x_axis and y_axis
     list_of_columns = df.columns
     df_x_axis = (df[list_of_columns[1]])
     df_y_axis = (df[list_of_columns[3]])
     # Frequency domain representation
     fourier_transform = np.fft.fft(df_y_axis)
-    length=(len( fourier_transform ))//2
-    frequancy_fourier_transform= fourier_transform[:length]
-    fourier_transform[150:]=fourier_transform[150:]*sliders[0]
-    # Do an inverse Fourier transform on the signal
-    inverse_fourier = np.fft.ifft(fourier_transform)
+    arrhythmia_ECG,inverse_fourier=arrhythmia (sliders,fourier_transform)
+    # Inverse fouriour transform Array for Actual signal
+    Actual_signal= np.fft.ifft(arrhythmia_ECG)
+    # Inverse fouriour transform Array for New signal
+    y_inverse_fourier = np.fft.ifft(inverse_fourier)
+
+    # length=(len( fourier_transform ))//2
+    # frequancy_fourier_transform= fourier_transform[:length]
+    # fourier_transform[150:]=fourier_transform[150:]*sliders[0]
+    # # Do an inverse Fourier transform on the signal
+    # inverse_fourier = np.fft.ifft(fourier_transform)
 
     # Create subplot
-    figure, (axis1,axis2) = plt.subplots(2)
-    plt.subplots_adjust(hspace=1)
-
-    # Time domain representation
-    axis1.set_title('Fourier transform depicting the frequency components')
-    axis1.plot(abs(frequancy_fourier_transform) )
-    axis1.set_xlabel('Frequency')
-    axis1.set_ylabel('Amplitude')
-    axis2.plot(df_x_axis, inverse_fourier,label="Inverse Fourier transform ")
-    axis2.plot(df_x_axis,df_y_axis,label="The Actual Data")
-    axis2.set_xlabel('Time')
-    axis2.set_ylabel('Amplitude')
+    figure, axis= plt.subplots()
+    axis.plot(df_x_axis[50:350],Actual_signal[50:350],label="The Actual Data")
+    axis.plot(df_x_axis[50:350], y_inverse_fourier[50:350],label="After remove arrhythima ")
+    axis.set_xlabel('Time')
+    axis.set_ylabel('Amplitude')
     st.plotly_chart(figure,use_container_width=True)
+    #  plot spectrogram 
+    fig2= plt.figure(figsize=(9, 3.5))
+    plt.specgram( abs(Actual_signal[:300]))
+    plt.colorbar()
+    st.pyplot(fig2)
     
-    return inverse_fourier, fourier_transform ,figure
+    return inverse_fourier, fourier_transform
+
+
+def arrhythmia (sliders,fourier_transform):
+        df = pd.read_csv('arr.csv')
+        abs_sub=df['abs_sub']
+        sliders[0]=sliders[0]/50
+        arrhythmia_ECG=np.add(fourier_transform,abs_sub)
+        result = [item * sliders[0] for item in abs_sub]
+        new_ECG=np.add(fourier_transform,result)
+
+        return arrhythmia_ECG, new_ECG
 #  ----------------------------------- CREATING SLIDERS ---------------------------------------------------------------
 def creating_sliders(names_list,label):
     columns = st.columns(10)
@@ -61,11 +75,6 @@ def creating_sliders(names_list,label):
             sliders_values.append(( sliders[f'slidergroup{key}']))
             st.write(label[index])
     return sliders_values
-############################ Plotting ######################################################################
-
-
-
-
 
 #  --------------------------   FOURIER TRANSFORM FOR  Wave       ----------------------------------------
 def   fourierTansformWave(audio=[] , sampfreq=440010):
