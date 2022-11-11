@@ -94,7 +94,7 @@ with st.container():
     # if file_uploaded:     # ----
 
     #     df = pd.read_csv(file_uploaded)
-    #     inverseFourier, fourierTransform, figure = fn.fourier_transform(df,sliders)
+    #     inverseFourier, fourierTransform = fn.ECG(df,sliders)
    
    
    
