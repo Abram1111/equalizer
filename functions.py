@@ -93,10 +93,13 @@ def   fourierTansformWave(audio=[] , sampfreq=440010):
 
 # ------------------------------------------  modify_wave   ------------------------------------
 
-def  modify_wave (magnitude=[], numPoints=0 , startIndex=0 , scalerNumber=1):
+# def  modify_wave (magnitude=[], numPoints=0 , startIndex=0 , scalerNumber=1):
     
-    for i in range(numPoints):
-        magnitude[startIndex+i]=  (magnitude[startIndex+i]*scalerNumber)
+    # for i in range(numPoints):
+    #     magnitude[startIndex+i]=  (magnitude[startIndex+i]*scalerNumber)
+def  modify_wave (magnitude=[], numPoints=0 , startIndex=0 , scalerNumber=[], sliders_num = 0):
+    for i in range(sliders_num):
+        magnitude[startIndex[i]:numPoints[i]+startIndex[i]]*=(scalerNumber[i]*10)
     return magnitude
 
 
