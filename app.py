@@ -102,16 +102,17 @@ else:
                     startIndex.insert(i,frequencies[i] * points_per_freq)
             
 
-    # ------------------------------------------------- END MUSIC  ----------------------------------
+# ------------------------------------------------- END MUSIC  ----------------------------------
 
+# -------------------------------------------------  Vowels  ----------------------------------
 
         elif radio_button == "Vowels":
             names_list = [(20,30,25),(20,30,25)]
             label= ["0:100","100:200"]
             sliders =fn.creating_sliders(names_list,label)
-        fig1 = plt.figure(figsize=(5, 2))
-        plt.specgram(audio, Fs=samplfreq, vmin=-20, vmax=50)
-        plt.colorbar()
+# ------------------------------------------------- END Vowels  ----------------------------------
+
+
         magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))         
         new_sig = irfft(magnitude)
         norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
@@ -121,7 +122,7 @@ else:
         lines1 = alt.Chart(df).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
                                                 y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=250)
 
-        fig1 = plt.figure(figsize=(5, 2))
+        fig2 = plt.figure(figsize=(5, 2))
         plt.specgram(new_sig, Fs=samplfreq, vmin=-20, vmax=50)
         plt.colorbar()
         start_btn_col ,stop_btn_col =st.sidebar.columns(2)
@@ -132,15 +133,38 @@ else:
         # Plot Animation
         before_col,after_col=st.columns(2)
         with before_col:
-            st.write("before")
+            before_text = '<p class="before", style="font-family:Arial"> before </p>'
+            st.markdown(before_text, unsafe_allow_html=True)
             line_plot_before = st.altair_chart(lines)
             st.audio(file_uploaded)
         with after_col:
-            st.write("after")
+            after_text = '<p class="after", style="font-family:Arial"> after </p>'
+            st.markdown(after_text, unsafe_allow_html=True)
             line_plot_after= st.altair_chart(lines1)
             st.audio("convertWave4.wav" )
-            st.pyplot(fig1)
-       
+            st.pyplot(fig2)
+        N = df.shape[0]  # number of elements in the dataframe
+        burst = 6        # number of elements (months) to add to the plot
+        size = burst         # size of the current dataset 
+        if start_btn:
+            for i in range(1, N):
+                step_df  = df.iloc[0:size]
+                step_df1 = df1.iloc[0:size]
+
+                lines  = animation.plot_animation(step_df)
+                lines1 = animation.plot_animation(step_df1)
+
+
+                line_plot_befor  = line_plot_before.altair_chart(lines)
+                line_plot_after= line_plot_after.altair_chart(lines1)
+
+                size = i + burst
+                if size >= N:
+                    size = N - 1
+                time.sleep(.00000000001)
+                if stop_btn:
+                    break
+
         
       
             
@@ -150,24 +174,4 @@ else:
         sliders =fn.creating_sliders(names_list,label)
 
 
-    N = df.shape[0]  # number of elements in the dataframe
-    burst = 6        # number of elements (months) to add to the plot
-    size = burst         # size of the current dataset 
-    if start_btn:
-        for i in range(1, N):
-            step_df  = df.iloc[0:size]
-            step_df1 = df1.iloc[0:size]
-
-            lines  = animation.plot_animation(step_df)
-            lines1 = animation.plot_animation(step_df1)
-
-
-            line_plot_befor  = line_plot_before.altair_chart(lines)
-            line_plot_after= line_plot_after.altair_chart(lines1)
-
-            size = i + burst
-            if size >= N:
-                size = N - 1
-            time.sleep(.00000000001)
-            if stop_btn:
-                break
+    
