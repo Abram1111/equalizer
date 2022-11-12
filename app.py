@@ -82,9 +82,10 @@ else:
                     numpoints.append(int(numofPoints/2))
                 else:
                     numofPoints=(numofPoints/2)*9 +numofPoints
+                    numpoints.append(int(numofPoints))
                 startIndex.append(int(normalIndex[i]/2))
             print("This is ",numofPoints)
-            numpoints = int(numofPoints)
+            # numpoints = int(numofPoints)
 #------------------------------------ MUSIC -----------------------------------------
 
         elif radio_button == "Music":
@@ -108,7 +109,9 @@ else:
             names_list = [(20,30,25),(20,30,25)]
             label= ["0:100","100:200"]
             sliders =fn.creating_sliders(names_list,label)
-        
+        fig1 = plt.figure(figsize=(5, 2))
+        plt.specgram(audio, Fs=samplfreq, vmin=-20, vmax=50)
+        plt.colorbar()
         magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))         
         new_sig = irfft(magnitude)
         norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
