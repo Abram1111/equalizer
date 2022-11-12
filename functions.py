@@ -27,11 +27,7 @@ def ECG(df,sliders ):
     # Inverse fouriour transform Array for New signal
     y_inverse_fourier = np.fft.ifft(inverse_fourier)
 
-    # length=(len( fourier_transform ))//2
-    # frequancy_fourier_transform= fourier_transform[:length]
-    # fourier_transform[150:]=fourier_transform[150:]*sliders[0]
-    # # Do an inverse Fourier transform on the signal
-    # inverse_fourier = np.fft.ifft(fourier_transform)
+  
 
     # Create subplot
     figure, axis= plt.subplots()
@@ -93,10 +89,7 @@ def   fourierTansformWave(audio=[] , sampfreq=440010):
 
 # ------------------------------------------  modify_wave   ------------------------------------
 
-# def  modify_wave (magnitude=[], numPoints=0 , startIndex=0 , scalerNumber=1):
-    
-    # for i in range(numPoints):
-    #     magnitude[startIndex+i]=  (magnitude[startIndex+i]*scalerNumber)
+
 def  modify_wave (magnitude=[], numPoints=0 , startIndex=0 , scalerNumber=[], sliders_num = 0):
     for i in range(sliders_num):
         magnitude[startIndex[i]:numPoints[i]+startIndex[i]]*=(scalerNumber[i]*10)

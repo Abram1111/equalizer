@@ -1,7 +1,7 @@
 .block-container.css-12oz5g7.egzxvld2 {
     max-width: 90%;
     padding: 0;
-    margin-top: 5%;
+    margin-top: 1%;
 
 }
 
@@ -40,25 +40,13 @@
 
 [role="radiogroup"] {
     margin-top: 15px;
+    margin-left: 30px;
 
 }
 
-/* @media (max-width:1000px) {
-    [role="radiogroup"] {
-        margin-left: -5%;
-    }
-
-}
-
-@media (max-width:800px) {
-    [role="radiogroup"] {
-        margin-left: 0;
-    }
-
-} */
 
 .row-widget.stRadio label:not(:last-of-type) {
-    margin-right: auto;
+    margin-top: 5px;
 }
 
 .css-1lsmgbg.egzxvld0 {
@@ -67,7 +55,7 @@
 
 
 
-@media (max-width:805px) {
+/* @media (max-width:805px) {
 
 
     [data-testid="stFileUploadDropzone"] button {
@@ -100,45 +88,8 @@
     .row-widget.stRadio label {
         margin-left: 10px;
     }
-}
-
-
-/* 
-.stSlider {
-    transform: rotate(90deg);
-    margin-top: 50px;
-    margin-left: 25px;
-
-}
-
-
-[data-baseweb="slider"] {
-    width: 200px;
-
-}
-
-[role="slider"] {
-    display: none;
-}
-
-[data-baseweb="slider"] :first-child {
-    height: 15px;
-}
-
-[data-testid="stTickBarMin"] {
-    transform: rotate(-90deg);
-}
-
-[data-testid="stTickBarMax"] {
-    transform: rotate(-90deg);
-}
-
-[data-testid="stTickBar"] {
-    margin-top: -24px;
-    margin-left: -3px;
-    margin-right: 5px;
-
 } */
+
 footer {
     display: none;
 }
@@ -149,4 +100,31 @@ footer {
 
 [data-testid="stMarkdownContainer"] p{
     margin-left: 10px;
+}
+.css-hxt7ib.e1fqkh3o4{
+    margin: 0;
+    margin-top: 20px;
+    padding: 0;
+    padding-left: 5px;
+}
+[data-testid="stSidebar"]{
+    max-width: 10%;
+    max-height: 50%;
+    background-color: white;
+    overflow: hidden;}
+.row-widget.stButton{
+max-width: 30px !important;
+}
+.element-container.css-1np2sqp.e1tzin5v3{
+    max-width: 30px !important; 
+}
+.css-46089q.e1tzin5v0{
+    max-width: 30px !important; 
+   margin-left: 10px;
+}
+.page_titel{
+    font-size: 50px;
+    position: absolute;
+    left: calc(50% - 300px);
+    transform: translateY(300px);
 }

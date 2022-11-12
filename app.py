@@ -9,7 +9,14 @@ from scipy.fft import irfft
 import numpy as np
 import librosa.display
 import matplotlib.pyplot as plt
-# ---------------------- Elements styling -------------------------------- #
+import plotly_express as px
+import IPython.display as ipd
+import librosa
+import altair as alt
+import animation as animation
+import time
+import plotly.graph_objects as go
+#------------ Elements styling -------------------------------- #
 with open('style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 # ----------------------- Main Window Elements --------------------------- #
@@ -42,166 +49,122 @@ freq=[]
 numpoints = []
 startIndex =[]
 samplfreq=0
+lines1=any
+file_uploaded = st.sidebar.file_uploader("")
+
+radio_button = st.sidebar.radio("", ["Normal", "Music", "Vowels", "Medical","Optional"], horizontal=False)
 
 
-with st.container():
-    upload_col, freq_col = st.columns([1, 4])
-    with upload_col:
-        file_uploaded = st.file_uploader("")
-    with freq_col:
-        radio_button = st.radio("", ["Normal", "Music", "Vowels", "Medical","Optional"], horizontal=True)
 
-    # if radio_button == "Normal":
-    #     names_list = [(0, 100,0),(0, 100,0),(0, 100,0),(0, 100,0),(0, 100,0),(0, 100,0),(0, 100,0),(0, 100,0),(0, 100,1),(0,100,1)]
-    #     label= ["1kHz","2kHz","3kHz","4kHz","5kHz","6kHz","7kHz","8kHz","9kHz","20kHz"]
-        
-    #     if file_uploaded is not None:
-    #         if file_uploaded.type=="audio/wav":
-    #             path=file_uploaded.name   # get path 
-    #             samplfreq , audio = wavfile.read(path)  # read file 
-    #             audio = audio[:200000]
-    #             magnitude_n , freq_n=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
-    #             normalIndex , numofPoints =fn.bandLength(freq_n)  # get index of slider in how point will change when move slider 
+if file_uploaded==None:
+    welcome_text = '<p class="page_titel", style="font-family:Arial">Please upload file </p>'
+    st.markdown(welcome_text, unsafe_allow_html=True)
 
-    if radio_button == "Normal":
-        names_list = [(0, 100,0),(0, 100,0),(0, 100,0),(0, 100,0),(0, 100,0),(0, 100,0),(0, 100,0),(0, 100,0),(0, 100,1),(0,100,1)]
-        label= ["1kHz","2kHz","3kHz","4kHz","5kHz","6kHz","7kHz","8kHz","9kHz","20kHz"]
-        
-        if file_uploaded is not None:
-            if file_uploaded.type=="audio/wav":
-                path=file_uploaded.name   # get path 
-                samplfreq , audio = wavfile.read(path)  # read file 
-                audio = audio[:200000]
-                magnitude , freq_n=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
-                normalIndex , numofPoints =fn.bandLength(freq_n)  # get index of slider in how point will change when move slider 
+else:
+    if radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowels":
+        signal_x_axis_before, signal_y_axis_before, sample_rate_before ,sound_info_before = animation.read_audio(file_uploaded)
+        df = pd.DataFrame({'time': signal_x_axis_before[::500], 'amplitude': signal_y_axis_before[:: 500]}, columns=['time', 'amplitude'])
+        lines = alt.Chart(df).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
+                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=250)
+        samplfreq , audio = wavfile.read(file_uploaded.name)  
+        if radio_button == "Normal":
+            # slider min and max 
+            names_list = [(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0,5,1)]
+            # slider labels
+            label= ["1kHz","2kHz","3kHz","4kHz","5kHz","6kHz","7kHz","8kHz","9kHz","10kHz"]
+            # read file          
+            sliders =fn.creating_sliders(names_list,label)
+            audio = audio[:200000]
+            magnitude , freq_n=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
+            normalIndex , numofPoints =fn.bandLength(freq_n)  # get index of slider in how point will change when move slider 
             for i in range(10):
                 if i<9: 
                     numpoints.append(int(numofPoints/2))
                 else:
                     numofPoints=(numofPoints/2)*9 +numofPoints
                 startIndex.append(int(normalIndex[i]/2))
-        print("This is ",numofPoints)
-        numpoints = int(numofPoints)
-
-
+            print("This is ",numofPoints)
+            numpoints = int(numofPoints)
 #------------------------------------ MUSIC -----------------------------------------
-    # elif radio_button == "Music":
-    #     names_list = [(0,100,1),(0,100,1),(0,100,1),(0,100,1)]
-    #     label= ["500Hz","1kHz" , "2kHz" ,"5kHz"]
+
+        elif radio_button == "Music":
+            names_list = [(0,5,1),(0,5,1),(0,5,1),(0,5,1)]
+            label= [" Drums","base guitar" , "piano" ,"guitar"]
+                #audio = audio[:200000]
+            sliders =fn.creating_sliders(names_list,label)
+            magnitude , freq=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
+            points_per_freq = np.ceil(len(freq) / (samplfreq / 2) )  # number of points per  frequancy 
+            points_per_freq = int(points_per_freq)
+            frequencies = [0, 500, 1000, 2000, 5000]
+            for i in range(len(label)):
+                    numpoints.insert(i,np.abs(frequencies[i] * points_per_freq - frequencies[i+1] * points_per_freq))
+                    startIndex.insert(i,frequencies[i] * points_per_freq)
+            
+
+    # ------------------------------------------------- END MUSIC  ----------------------------------
+
+
+        elif radio_button == "Vowels":
+            names_list = [(20,30,25),(20,30,25)]
+            label= ["0:100","100:200"]
+            sliders =fn.creating_sliders(names_list,label)
         
-    #     if file_uploaded is not None:
-    #         if file_uploaded.type=="audio/wav":
-    #             path=file_uploaded.name   # get path 
-    #             samplfreq , audio = wavfile.read(path)  # read file 
-    #             audio = audio[:200000]
-    #             magnitude , freq=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
-                
-    #             points_per_freq = int(len(freq) / (samplfreq / 2) )  # number of points per  frequancy
+        magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))         
+        new_sig = irfft(magnitude)
+        norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
+        write("convertWave4.wav", samplfreq, norm_new_sig)
+        signal_x_axis_after, signal_y_axis_after, sample_rate_after ,sound_info_after = animation.read_audio("convertWave4.wav")    # Read Audio File
+        df1 = pd.DataFrame({'time': signal_x_axis_after[::500], 'amplitude': signal_y_axis_after[:: 500]}, columns=['time', 'amplitude'])
+        lines1 = alt.Chart(df).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
+                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=250)
 
-    #             numPoints_1=np.abs(0* points_per_freq- 500*points_per_freq)
-    #             numPoints_2=np.abs(500* points_per_freq- 1000*points_per_freq)
-    #             numPoints_3=np.abs(1000* points_per_freq- 2000*points_per_freq) # piano 
-    #             numPoints_4=np.abs(20000* points_per_freq- 5000*points_per_freq)
-    #             startIndex_1=0*points_per_freq
-    #             print(5000*points_per_freq)
-    #             startIndex_2=500* points_per_freq
-    #             startIndex_3=1000*points_per_freq
-    #             startIndex_4=2000* points_per_freq
-    elif radio_button == "Music":
-        names_list = [(0,100,1),(0,100,1),(0,100,1),(0,100,1)]
-        label= ["500Hz - Drums","1kHz" , "2kHz - piano" ,"5kHz"]
-        if file_uploaded is not None:
-            if file_uploaded.type=="audio/wav":
-                path=file_uploaded.name   # get path 
-                samplfreq , audio = wavfile.read(path)  # read file 
-                audio = audio[:200000]
-                magnitude , freq=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
-                points_per_freq = np.ceil(len(freq) / (samplfreq / 2) )  # number of points per  frequancy 
-                points_per_freq = int(points_per_freq)
-                frequencies = [0, 500, 1000, 2000, 5000]
-                for i in range(len(label)):
-                        numpoints.insert(i,np.abs(frequencies[i] * points_per_freq - frequencies[i+1] * points_per_freq))
-                        startIndex.insert(i,frequencies[i] * points_per_freq)
-
-# ------------------------------------------------- END MUSIC  ----------------------------------
-
-
-    elif radio_button == "Vowels":
-        names_list = [(20,30,25),(20,30,25)]
-        label= ["0:100","100:200"]
-
-
+        fig1 = plt.figure(figsize=(5, 2))
+        plt.specgram(new_sig, Fs=samplfreq, vmin=-20, vmax=50)
+        plt.colorbar()
+        start_btn_col ,stop_btn_col =st.sidebar.columns(2)
+        with start_btn_col:
+            start_btn = st.button('Start') 
+        with stop_btn_col:
+            stop_btn =st.button('stop')
+        # Plot Animation
+        before_col,after_col=st.columns(2)
+        with before_col:
+            st.write("before")
+            line_plot_before = st.altair_chart(lines)
+            st.audio(file_uploaded)
+        with after_col:
+            st.write("after")
+            line_plot_after= st.altair_chart(lines1)
+            st.audio("convertWave4.wav" )
+            st.pyplot(fig1)
+       
+        
+      
+            
     elif radio_button == "Medical":
         names_list = [(0,10,1)]
         label= ["0:10"]
-        
-        
-    else:
-        names_list = [(20,30,25),(20,30,25)]
-        label= ["0:100","100:200"]
-  
-    sliders =fn.creating_sliders(names_list,label)
+        sliders =fn.creating_sliders(names_list,label)
 
-    # if file_uploaded:     # ----
 
-    #     df = pd.read_csv(file_uploaded)
-    #     inverseFourier, fourierTransform = fn.ECG(df,sliders)
-   
-   
-   
-   
-# # normal 
-#     if radio_button == "Normal" and len(magnitude_n)>0:
-#         for i in range(10):
-#             if i<9: 
-#                 numofPoints=numofPoints/2
-#             else:
-#                 numofPoints=(numofPoints/2)*9 +numofPoints
-                
-#             magnitude_n=fn.modify_wave(magnitude_n ,int(numofPoints) , int(normalIndex[i]/2),sliders[i]*100) 
+    N = df.shape[0]  # number of elements in the dataframe
+    burst = 6        # number of elements (months) to add to the plot
+    size = burst         # size of the current dataset 
+    if start_btn:
+        for i in range(1, N):
+            step_df  = df.iloc[0:size]
+            step_df1 = df1.iloc[0:size]
 
-        
-        
-        # new_sig = irfft(magnitude_n)
-        # norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
-        # write("singnal.wav", samplfreq, norm_new_sig)
-        # st.audio("singnal.wav" )
-        
-        # #  to plot reconstuctoin 
-        # sampleRate , sound = samplfreq , audio = wavfile.read("singnal.wav")
-        # fn.reconstruct(sound , sampleRate)   
-    
-#  music 
-    # if radio_button == "Music" and len(magnitude)>10:
-    #     magnitude=fn.modify_wave(magnitude , numPoints_1 , startIndex_1 , sliders[0]*10) 
-    #     magnitude=fn.modify_wave(magnitude , numPoints_2 , startIndex_2 , sliders[1]*10) 
-    #     magnitude=fn.modify_wave(magnitude , numPoints_3 , startIndex_3 , sliders[2]*10) 
-    #     magnitude=fn.modify_wave(magnitude , numPoints_4 , startIndex_4 , sliders[3]*10) 
-        
-        
-    #     new_sig = irfft(magnitude)
-    #     norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
-    #     write("convertWave4.wav", samplfreq, norm_new_sig)
-    #     st.audio("convertWave4.wav" )
-        
-    #     #  to plot reconstuctoin 
-    #     sampleRate , sound = samplfreq , audio = wavfile.read("convertWave4.wav")
-    #     fn.reconstruct(sound , sampleRate)
+            lines  = animation.plot_animation(step_df)
+            lines1 = animation.plot_animation(step_df1)
 
-    if (len(magnitude) != 0):
-        magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))         
-        new_sig = irfft(magnitude)
-        #  to plot reconstuctoin 
-        # sampleRate , sound = samplfreq , audio = wavfile.read("convertWave4.wav")
-        # fn.reconstruct(audio , samplfreq)
-        fig = plt.figure(figsize=(20, 4))
-        # librosa.display.waveshow(audio, samplfreq)
-        plt.plot(new_sig)
-        st.plotly_chart(fig, use_container_width=True)
-        fig1 = plt.figure(figsize=(20, 4))
-        plt.specgram(new_sig, Fs=samplfreq, vmin=-20, vmax=50)
-        plt.colorbar()
-        st.pyplot(fig1)
-        norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
-        write("convertWave4.wav", samplfreq, norm_new_sig)
-        st.audio("convertWave4.wav" )
+
+            line_plot_befor  = line_plot_before.altair_chart(lines)
+            line_plot_after= line_plot_after.altair_chart(lines1)
+
+            size = i + burst
+            if size >= N:
+                size = N - 1
+            time.sleep(.00000000001)
+            if stop_btn:
+                break
