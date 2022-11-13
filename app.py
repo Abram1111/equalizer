@@ -66,7 +66,7 @@ else:
         signal_x_axis_before, signal_y_axis_before, sample_rate_before ,sound_info_before = animation.read_audio(file_uploaded)
         df = pd.DataFrame({'time': signal_x_axis_before[::500], 'amplitude': signal_y_axis_before[:: 500]}, columns=['time', 'amplitude'])
         lines = alt.Chart(df).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
-                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=250)
+                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
         samplfreq , audio = wavfile.read(file_uploaded.name)  
         if radio_button == "Normal":
             # slider min and max 
@@ -121,9 +121,9 @@ else:
         signal_x_axis_after, signal_y_axis_after, sample_rate_after ,sound_info_after = animation.read_audio("convertWave4.wav")    # Read Audio File
         df1 = pd.DataFrame({'time': signal_x_axis_after[::500], 'amplitude': signal_y_axis_after[:: 500]}, columns=['time', 'amplitude'])
         lines1 = alt.Chart(df).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
-                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=250)
+                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
 
-        fig2 = plt.figure(figsize=(5, 2))
+        fig2 = plt.figure(figsize=(5, 1.5))
         plt.specgram(new_sig, Fs=samplfreq, vmin=-20, vmax=50)
         plt.colorbar()
         start_btn_col ,stop_btn_col =st.sidebar.columns(2)
@@ -137,13 +137,13 @@ else:
             before_text = '<p class="before", style="font-family:Arial"> before </p>'
             st.markdown(before_text, unsafe_allow_html=True)
             line_plot_before = st.altair_chart(lines)
-            st.audio(file_uploaded)
+        st.sidebar.audio(file_uploaded)
         with after_col:
             after_text = '<p class="after", style="font-family:Arial"> after </p>'
             st.markdown(after_text, unsafe_allow_html=True)
             line_plot_after= st.altair_chart(lines1)
-            st.audio("convertWave4.wav" )
             st.pyplot(fig2)
+        st.sidebar.audio("convertWave4.wav" )
         N = df.shape[0]  # number of elements in the dataframe
         burst = 6        # number of elements (months) to add to the plot
         size = burst     # size of the current dataset 
@@ -185,13 +185,13 @@ else:
         Actual_signal, y_inverse_fourier,data, data2 = fn.ECG(df,sliders)
         
         lines = alt.Chart(data).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
-                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=250)
+                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
         lines_1 = alt.Chart(data2).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
-                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=250)
-        figure1= plt.figure(figsize=(4,2.5))
+                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
+        figure1= plt.figure(figsize=(4,1.5))
         plt.specgram( abs(Actual_signal[:300]))
         plt.colorbar()
-        figure2= plt.figure(figsize=(4,2.5))
+        figure2= plt.figure(figsize=(4,1.5))
         plt.specgram( abs(y_inverse_fourier[:300]))
         plt.colorbar()
         start_btn_col ,stop_btn_col =st.sidebar.columns(2)

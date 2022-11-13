@@ -40,7 +40,7 @@ def plot_animation(df):
         y=alt.Y('amplitude', axis=alt.Axis(title='amplitude')),
     ).properties(
         width=500,
-        height=250
+        height=200
     )
     return lines
 
