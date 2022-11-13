@@ -147,10 +147,15 @@ else:
         N = df.shape[0]  # number of elements in the dataframe
         burst = 6        # number of elements (months) to add to the plot
         size = burst     # size of the current dataset 
+        if "size" not in st.session_state:
+            st.session_state['size'] = size
+        if "counter" not in st.session_state:
+            st.session_state['counter'] = 0
         if start_btn:
             for i in range(1, N):
-                step_df  = df.iloc[0:size]
-                step_df1 = df1.iloc[0:size]
+                i=st.session_state['counter']
+                step_df  = df.iloc[0:st.session_state['size']]
+                step_df1 = df1.iloc[0:st.session_state['size']]
 
                 lines  = animation.plot_animation(step_df)
                 lines1 = animation.plot_animation(step_df1)
@@ -159,13 +164,18 @@ else:
                 line_plot_befor  = line_plot_before.altair_chart(lines)
                 line_plot_after= line_plot_after.altair_chart(lines1)
 
-                size = i + burst
-                if size >= N:
-                    size = N - 1
+                st.session_state['size'] = i + burst
+                if st.session_state['size'] >= N:
+                    st.session_state['size'] = N - 1
                 time.sleep(.00000000001)
-                if stop_btn:
-                    break
-
+                st.session_state['counter'] += 1
+        if stop_btn:
+            step_df  = df.iloc[0:st.session_state['size']]
+            step_df1 = df1.iloc[0:st.session_state['size']]
+            lines  = animation.plot_animation(step_df)
+            lines1 = animation.plot_animation(step_df1)
+            line_plot_befor  = line_plot_before.altair_chart(lines)
+            line_plot_after= line_plot_after.altair_chart(lines1) 
 # ----------------------- Medical ------------------------------------------------------- # 
     elif radio_button == "Medical":
         names_list = [(0,100,1)]
@@ -205,10 +215,15 @@ else:
         N = data.shape[0] # number of elements in the dataframe
         burst = 6         # number of elements (months) to add to the plot
         size = burst      # size of the current dataset 
+        if "size" not in st.session_state:
+            st.session_state['size'] = size
+        if "counter" not in st.session_state:
+            st.session_state['counter'] = 0
         if start_btn:
             for i in range(1, N):
-                step_df  = data.iloc[0:size]
-                step_df1 = data2.iloc[0:size]
+                i=st.session_state['counter']
+                step_df  = data.iloc[0:st.session_state['size']]
+                step_df1 = data2.iloc[0:st.session_state['size']]
 
                 lines  = animation.plot_animation(step_df)
                 lines1 = animation.plot_animation(step_df1)
@@ -217,11 +232,16 @@ else:
                 line_plot_befor  = line_plot_before.altair_chart(lines)
                 line_plot_after= line_plot_after.altair_chart(lines1)
 
-                size = i + burst
-                if size >= N:
-                    size = N - 1
+                st.session_state['size'] = i + burst
+                if st.session_state['size'] >= N:
+                    st.session_state['size'] = N - 1
                 time.sleep(.00000000001)
-                if stop_btn:
-                    break
-
+                st.session_state['counter'] += 1
+        if stop_btn:
+            step_df  = data.iloc[0:st.session_state['size']]
+            step_df1 = data2.iloc[0:st.session_state['size']]
+            lines  = animation.plot_animation(step_df)
+            lines1 = animation.plot_animation(step_df1)
+            line_plot_befor  = line_plot_before.altair_chart(lines)
+            line_plot_after= line_plot_after.altair_chart(lines1)             
     
