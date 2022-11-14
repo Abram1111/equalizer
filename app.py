@@ -64,6 +64,8 @@ if file_uploaded==None:
 else:
     if radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowels":
         signal_x_axis_before, signal_y_axis_before, sample_rate_before ,sound_info_before = animation.read_audio(file_uploaded)
+        
+        #
         df = pd.DataFrame({'time': signal_x_axis_before[::500], 'amplitude': signal_y_axis_before[:: 500]}, columns=['time', 'amplitude'])
         lines = alt.Chart(df).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
                                                 y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
@@ -112,8 +114,16 @@ else:
             label= ["0:100","100:200"]
             sliders =fn.creating_sliders(names_list,label)
 # ------------------------------------------------- END Vowels  ---------------------------------
-
-
+        # plot spactro (befor)
+        magnitude_spactro=magnitude
+        spactrogramOrigin = irfft(magnitude_spactro)
+        fig_befor_spacrto = plt.figure(figsize=(5, 1.5))
+        plt.specgram(spactrogramOrigin, Fs=samplfreq, vmin=-20, vmax=50)
+        plt.colorbar()
+        
+        #end plot spactro (befor)
+        
+         
         magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))         
         new_sig = irfft(magnitude)
         norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
@@ -137,6 +147,7 @@ else:
             before_text = '<p class="before", style="font-family:Arial"> before </p>'
             st.markdown(before_text, unsafe_allow_html=True)
             line_plot_before = st.altair_chart(lines)
+            st.pyplot(fig_befor_spacrto)
         st.sidebar.audio(file_uploaded)
         with after_col:
             after_text = '<p class="after", style="font-family:Arial"> after </p>'

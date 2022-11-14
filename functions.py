@@ -72,9 +72,10 @@ def creating_sliders(names_list,label):
     return sliders_values
 
 #  --------------------------   FOURIER TRANSFORM FOR  Wave       ----------------------------------------
+#  Data is 1-D for 1-channel WAV, or 2-D of shape (Nsamples, Nchannels)
 def   fourierTansformWave(audio=[] , sampfreq=440010):
     try:
-        audio = audio[: ,1]
+        audio = audio[:,0]
     except:
         audio = audio[:]
 
@@ -91,7 +92,7 @@ def   fourierTansformWave(audio=[] , sampfreq=440010):
 
 def  modify_wave (magnitude=[], numPoints=0 , startIndex=0 , scalerNumber=[], sliders_num = 0):
     for i in range(sliders_num):
-        magnitude[startIndex[i]:numPoints[i]+startIndex[i]]*=(scalerNumber[i]*10)
+        magnitude[startIndex[i]:numPoints[i]+startIndex[i]]*=(scalerNumber[i])
     return magnitude
 
 
@@ -103,7 +104,7 @@ def bandLength(freq=[]):
     for i in range(10):
         arr[i] =int (i*length_band)
         
-    return arr  , len(freq)/10
+    return arr  , len(freq)/10  # len(freq)/10 number of piont per band
 
 # ------------------------------------------------------ reconstruction signal -----------------------------------
 
