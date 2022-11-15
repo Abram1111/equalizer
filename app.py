@@ -63,7 +63,7 @@ else:
             # slider labels
             label= ["1kHz","2kHz","3kHz","4kHz","5kHz","6kHz","7kHz","8kHz","9kHz","10kHz"]
             # read file          
-            sliders =fn.creating_sliders(names_list,label)
+            sliders =fn.creating_new_slider(label)
             audio = audio[:200000]
             
             normalIndex , numofPoints =fn.bandLength(freq)  # get index of slider in how point will change when move slider 
@@ -82,7 +82,7 @@ else:
             names_list = [(0,5,1),(0,5,1),(0,5,1),(0,5,1)]
             label= [" Drums","base guitar" , "piano" ,"guitar"]
                 #audio = audio[:200000]
-            sliders =fn.creating_sliders(names_list,label)
+            sliders =fn.creating_new_slider(label)
             
             points_per_freq = np.ceil(len(freq) / (samplfreq / 2) )  # number of points per  frequancy 
             points_per_freq = int(points_per_freq)
@@ -97,9 +97,8 @@ else:
 # -------------------------------------------------  Vowels  ----------------------------------
 
         elif radio_button == "Vowels":
-            names_list = [(20,30,25),(20,30,25)]
             label= ["0:100","100:200"]
-            sliders =fn.creating_sliders(names_list,label)
+            sliders =fn.creating_new_slider(label)
 # ------------------------------------------------- END Vowels  ---------------------------------
         elif radio_button=="Optional":      
             mag,sr =librosa.load(file_uploaded.name)
@@ -139,15 +138,15 @@ else:
         with before_col:
             before_text = '<p class="before", style="font-family:Arial"> before </p>'
             st.markdown(before_text, unsafe_allow_html=True)
+            st.audio(file_uploaded)
             line_plot_before = st.altair_chart(lines)
             st.pyplot(fig_befor_spacrto)
-        st.sidebar.audio(file_uploaded)
         with after_col:
             after_text = '<p class="after", style="font-family:Arial"> after </p>'
             st.markdown(after_text, unsafe_allow_html=True)
+            st.audio("convertWave4.wav" )
             line_plot_after= st.altair_chart(lines1)
             st.pyplot(fig2)
-        st.sidebar.audio("convertWave4.wav" )
         N = df.shape[0]  # number of elements in the dataframe
         burst = 6        # number of elements (months) to add to the plot
         size = burst     # size of the current dataset 
@@ -178,9 +177,8 @@ else:
             line_plot_after= line_plot_after.altair_chart(lines1) 
 # ----------------------- Medical ------------------------------------------------------- # 
     elif radio_button == "Medical":
-        names_list = [(0,100,1)]
-        label= ["0:10"]
-        sliders =fn.creating_sliders(names_list,label)
+        label= ["Bradycardia","Techycardia","Normal","Atrial Flutter","Atrial"]
+        sliders =fn.creating_new_slider(label)
         df = pd.read_csv(file_uploaded)
         Actual_signal, y_inverse_fourier,data, data2 = fn.ECG(df,sliders)
         

@@ -128,10 +128,18 @@ max-width: 30px !important;
 }
 .before , .after{
     font-size: x-large;
+    margin-top: 20px;
 }
 [data-testid="stArrowVegaLiteChart"]{
     max-height: 100px;
 }
 [data-testid="stHeader"]{
     display: none;
+}
+[data-testid="stMarkdownContainer"]{
+  text-align: center;
+  margin-top: -70px;
+}
+iframe{
+    margin-top: -50px;
 }

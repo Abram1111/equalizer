@@ -9,25 +9,37 @@ from scipy.fft import rfft, rfftfreq,irfft,fft, fftshift
 import plotly.express as px
 import matplotlib as mpl
 from scipy import signal
+import streamlit.components.v1 as components
+import os
 
+
+
+
+parent_dir= os.path.dirname(os.path.abspath(__file__))
+build_dir=os.path.join(parent_dir,"build")
+_vertical_slider= components.declare_component("vertical_slider",path=build_dir)
+def vertical_slider (value,step,min=min,max=max,key=None):
+  slider_value =_vertical_slider(value=value,step=step,min=min,max=max,key=key,default=value)
+  return slider_value
 #  ----------------------------------- ECG ---------------------------------------------------
 def ECG(df,sliders ):
-    # Getting df x_axis and y_axis
     list_of_columns = df.columns
-    df_x_axis = (df[list_of_columns[1]])
-    df_y_axis = (df[list_of_columns[3]])
+    time = (df[list_of_columns[0]])
+    magnitude = (df[list_of_columns[1]])
     # Frequency domain representation
-    fourier_transform = np.fft.rfft(df_y_axis)
-    arrhythmia_ECG,inverse_fourier=arrhythmia (sliders,fourier_transform)
-    # Inverse fouriour transform Array for Actual signal
-    Actual_signal= np.fft.irfft(arrhythmia_ECG)
-    # Inverse fouriour transform Array for New signal
-    y_inverse_fourier = np.fft.irfft(inverse_fourier)
-    data = pd.DataFrame({'time':df_x_axis[10:], 'amplitude': Actual_signal[10:]}, columns=['time', 'amplitude'])
-    data2 = pd.DataFrame({'time':df_x_axis[10:] , 'amplitude':y_inverse_fourier[10:] }, columns=['time', 'amplitude'])
-
-  
-
+    # Inverse fouriour transform for Actual signal
+    Magnitude= np.fft.rfft(magnitude)
+    Magnitude[0:60] *= sliders[0]
+    Magnitude[60:90] *= sliders[1]
+    Magnitude[90:250] *= sliders[2]
+    Magnitude[250:300] *= sliders[3]
+    Magnitude[300:] *= sliders[4] 
+    # Do an inverse Fourier transform on the signal
+    y_inverse_fourier = np.fft.irfft(Magnitude)
+    # store the signal in dataframe 
+    data = pd.DataFrame({'time':time, 'amplitude':magnitude }, columns=['time', 'amplitude'])
+    data2 = pd.DataFrame({'time':time, 'amplitude':y_inverse_fourier }, columns=['time', 'amplitude'])
+    
     # # Create subplot
     # figure, axis= plt.subplots()
     # axis.plot(df_x_axis[50:350],Actual_signal[50:350],label="The Actual Data")
@@ -41,18 +53,8 @@ def ECG(df,sliders ):
     # plt.colorbar()
     # st.pyplot(fig2)
     
-    return Actual_signal, y_inverse_fourier ,data, data2
+    return magnitude , y_inverse_fourier,data, data2
 
-
-def arrhythmia (sliders,fourier_transform):
-        df = pd.read_csv('arr.csv')
-        abs_sub=df['abs_sub']
-        sliders[0]=sliders[0]/50
-        arrhythmia_ECG=np.add(fourier_transform,abs_sub[:201])
-        result = [item * sliders[0] for item in abs_sub[:201]]
-        new_ECG=np.add(fourier_transform,result)
-
-        return arrhythmia_ECG, new_ECG
 #  ----------------------------------- CREATING SLIDERS ---------------------------------------------------------------
 def creating_sliders(names_list,label):
     columns = st.columns(10)
@@ -118,3 +120,12 @@ def SPectrogram():
     magnitude1 , freq_n=fourierTansformWave(audio ,samplfreq) 
     new_sig = irfft(magnitude1)
     return new_sig
+def creating_new_slider(label):
+    columns = st.columns(len(label))
+    sliders_values = []
+    for index in range(len(label)):
+        with columns[index]:
+            slider=vertical_slider(1 , step=1,min= 0 ,max=5 ,key=index)
+            sliders_values.append(slider)
+            st.write(label[index])
+    return sliders_values
