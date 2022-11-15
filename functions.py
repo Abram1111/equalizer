@@ -120,7 +120,6 @@ def SPectrogram():
     magnitude1 , freq_n=fourierTansformWave(audio ,samplfreq) 
     new_sig = irfft(magnitude1)
     return new_sig
-<<<<<<< HEAD
 def creating_new_slider(label):
     columns = st.columns(len(label))
     sliders_values = []
@@ -130,5 +129,3 @@ def creating_new_slider(label):
             sliders_values.append(slider)
             st.write(label[index])
     return sliders_values
-=======
->>>>>>> 02ce8ad2950c6c018d8c0d3c92228f24de8db327
