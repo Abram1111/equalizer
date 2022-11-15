@@ -21,23 +21,6 @@ import soundfile as sf
 with open('style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 # ----------------------- Main Window Elements --------------------------- #
-# normalIndex=[] 
-# numofPoints=0
-# magnitude_n=[]
-
-
-# --------------------------------------------------------------------------#
-# magnitude=[]
-# freq=[] 
-# numPoints_1=0 
-# startIndex_1=0
-# numPoints_2=0 
-# startIndex_2=0
-# numPoints_3=0 
-# startIndex_3=0
-# numPoints_4=0 
-# startIndex_4=0
-# samplfreq=0
 
 normalIndex=[] 
 numofPoints=0
@@ -51,6 +34,7 @@ numpoints = []
 startIndex =[]
 samplfreq=0
 lines1=any
+optional =  False
 # -------------------------------------------------------------------------------------------------------------#
 file_uploaded = st.sidebar.file_uploader("")
 
@@ -71,7 +55,8 @@ else:
         df = pd.DataFrame({'time': signal_x_axis_before[::500], 'amplitude': signal_y_axis_before[:: 500]}, columns=['time', 'amplitude'])
         lines = alt.Chart(df).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
                                                 y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
-        samplfreq , audio = wavfile.read(file_uploaded.name)  
+        samplfreq, audio = wavfile.read(file_uploaded.name)  
+        magnitude , freq=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
         if radio_button == "Normal":
             # slider min and max 
             names_list = [(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0,5,1)]
@@ -80,8 +65,8 @@ else:
             # read file          
             sliders =fn.creating_sliders(names_list,label)
             audio = audio[:200000]
-            magnitude , freq_n=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
-            normalIndex , numofPoints =fn.bandLength(freq_n)  # get index of slider in how point will change when move slider 
+            
+            normalIndex , numofPoints =fn.bandLength(freq)  # get index of slider in how point will change when move slider 
             for i in range(10):
                 if i<9: 
                     numpoints.append(int(numofPoints/2))
@@ -98,7 +83,7 @@ else:
             label= [" Drums","base guitar" , "piano" ,"guitar"]
                 #audio = audio[:200000]
             sliders =fn.creating_sliders(names_list,label)
-            magnitude , freq=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
+            
             points_per_freq = np.ceil(len(freq) / (samplfreq / 2) )  # number of points per  frequancy 
             points_per_freq = int(points_per_freq)
             frequencies = [0, 500, 1000, 2000, 5000]
@@ -116,22 +101,23 @@ else:
             label= ["0:100","100:200"]
             sliders =fn.creating_sliders(names_list,label)
 # ------------------------------------------------- END Vowels  ---------------------------------
-        elif radio_button=="Optional":
-            magnitude,samplfreq =librosa.load(file_uploaded.name)
-            new_sig = librosa.effects.pitch_shift(magnitude,sr=samplfreq,n_steps=-6)
-            sf.write('convertWave4.wav',new_sig,samplfreq)
-
-        # plot spactro (befor)
+        elif radio_button=="Optional":      
+            mag,sr =librosa.load(file_uploaded.name)
+            new_sig = librosa.effects.pitch_shift(mag,sr=sr,n_steps=-5)
+            sf.write('convertWave4.wav',new_sig,sr)
+            new_sig = fn.SPectrogram()
+            
         magnitude_spactro=magnitude
-        spactrogramOrigin = irfft(magnitude_spactro)
+        spectrogramOrigin = irfft(magnitude_spactro)
+        # plot spactro (before)
         fig_befor_spacrto = plt.figure(figsize=(5, 1.5))
-        plt.specgram(spactrogramOrigin, Fs=samplfreq, vmin=-20, vmax=50)
+        plt.specgram(spectrogramOrigin, Fs=samplfreq, vmin=-20, vmax=50)
         plt.colorbar()
         
-        #end plot spactro (befor)
+        #end plot spactro (before)
         
         if radio_button!="Optional":
-            magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))         
+            magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))
             new_sig = irfft(magnitude)
             norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
             write("convertWave4.wav", samplfreq, norm_new_sig)
@@ -165,7 +151,6 @@ else:
         N = df.shape[0]  # number of elements in the dataframe
         burst = 6        # number of elements (months) to add to the plot
         size = burst     # size of the current dataset 
-
         if start_btn:
             for i in range(1, N):
                 i=st.session_state['counter']

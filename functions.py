@@ -113,3 +113,8 @@ def reconstruct(signal=[] , sampleRate=0):
         fig =px.line(x=time,y=signal)
         st.plotly_chart(fig ,use_container_width=True)
 
+def SPectrogram():
+    samplfreq, audio = wav.read('convertWave4.wav')  
+    magnitude1 , freq_n=fourierTansformWave(audio ,samplfreq) 
+    new_sig = irfft(magnitude1)
+    return new_sig
