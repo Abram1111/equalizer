@@ -178,8 +178,8 @@ else:
             line_plot_after= line_plot_after.altair_chart(lines1) 
 # ----------------------- Medical ------------------------------------------------------- # 
     elif radio_button == "Medical":
-        names_list = [(0,100,1)]
-        label= ["0:10"]
+        names_list =[(0,10,1),(0,10,1),(0,10,1),(0,10,1),(0,10,1)]
+        label= ["Bradycardia","Techycardia","Normal","Atrial Flutter","Atrial"]
         sliders =fn.creating_sliders(names_list,label)
         df = pd.read_csv(file_uploaded)
         Actual_signal, y_inverse_fourier,data, data2 = fn.ECG(df,sliders)
