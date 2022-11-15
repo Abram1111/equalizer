@@ -16,6 +16,7 @@ import altair as alt
 import animation as animation
 import time
 import plotly.graph_objects as go
+import soundfile as sf
 #-------------------------- Elements styling ----------------------------- #
 with open('style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
@@ -54,15 +55,16 @@ lines1=any
 file_uploaded = st.sidebar.file_uploader("")
 
 radio_button = st.sidebar.radio("", ["Normal", "Music", "Vowels", "Medical","Optional"], horizontal=False)
-
-
-
+if "size" not in st.session_state:
+    st.session_state['size'] = 0
+if "counter" not in st.session_state:
+    st.session_state['counter'] = 0
 if file_uploaded==None:
     welcome_text = '<p class="page_titel", style="font-family:Arial">Please upload file </p>'
     st.markdown(welcome_text, unsafe_allow_html=True)
 
 else:
-    if radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowels":
+    if radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowels" or radio_button =="Optional" :
         signal_x_axis_before, signal_y_axis_before, sample_rate_before ,sound_info_before = animation.read_audio(file_uploaded)
         
         #
@@ -114,6 +116,11 @@ else:
             label= ["0:100","100:200"]
             sliders =fn.creating_sliders(names_list,label)
 # ------------------------------------------------- END Vowels  ---------------------------------
+        elif radio_button=="Optional":
+            magnitude,samplfreq =librosa.load(file_uploaded.name)
+            new_sig = librosa.effects.pitch_shift(magnitude,sr=samplfreq,n_steps=-6)
+            sf.write('convertWave4.wav',new_sig,samplfreq)
+
         # plot spactro (befor)
         magnitude_spactro=magnitude
         spactrogramOrigin = irfft(magnitude_spactro)
@@ -123,11 +130,11 @@ else:
         
         #end plot spactro (befor)
         
-         
-        magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))         
-        new_sig = irfft(magnitude)
-        norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
-        write("convertWave4.wav", samplfreq, norm_new_sig)
+        if radio_button!="Optional":
+            magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))         
+            new_sig = irfft(magnitude)
+            norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
+            write("convertWave4.wav", samplfreq, norm_new_sig)
         signal_x_axis_after, signal_y_axis_after, sample_rate_after ,sound_info_after = animation.read_audio("convertWave4.wav")    # Read Audio File
         df1 = pd.DataFrame({'time': signal_x_axis_after[::500], 'amplitude': signal_y_axis_after[:: 500]}, columns=['time', 'amplitude'])
         lines1 = alt.Chart(df).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
@@ -158,10 +165,7 @@ else:
         N = df.shape[0]  # number of elements in the dataframe
         burst = 6        # number of elements (months) to add to the plot
         size = burst     # size of the current dataset 
-        if "size" not in st.session_state:
-            st.session_state['size'] = size
-        if "counter" not in st.session_state:
-            st.session_state['counter'] = 0
+
         if start_btn:
             for i in range(1, N):
                 i=st.session_state['counter']

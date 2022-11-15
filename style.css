@@ -1,8 +1,6 @@
 .block-container.css-12oz5g7.egzxvld2 {
     max-width: 90%;
     padding: 0;
-    margin-top: 1%;
-
 }
 
 .css-u8hs99.exg6vvm14 {
@@ -133,4 +131,7 @@ max-width: 30px !important;
 }
 [data-testid="stArrowVegaLiteChart"]{
     max-height: 100px;
+}
+[data-testid="stHeader"]{
+    display: none;
 }
