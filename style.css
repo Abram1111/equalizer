@@ -108,7 +108,7 @@ footer {
 [data-testid="stSidebar"]{
     max-width: 15%;
     max-height: 70%;
-    background-color: white;
+    background-color: transparent;
     overflow: hidden;}
 .row-widget.stButton{
 max-width: 30px !important;
@@ -133,9 +133,9 @@ max-width: 30px !important;
 [data-testid="stArrowVegaLiteChart"]{
     max-height: 100px;
 }
-[data-testid="stHeader"]{
+/* [data-testid="stHeader"]{
     display: none;
-}
+} */
 [data-testid="stMarkdownContainer"]{
   text-align: center;
   margin-top: -70px;

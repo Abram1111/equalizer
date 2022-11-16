@@ -59,12 +59,11 @@ else:
         magnitude , freq=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
         if radio_button == "Normal":
             # slider min and max 
-            names_list = [(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0, 5,1),(0,5,1)]
             # slider labels
             label= ["1kHz","2kHz","3kHz","4kHz","5kHz","6kHz","7kHz","8kHz","9kHz","10kHz"]
             # read file          
             sliders =fn.creating_new_slider(label)
-            audio = audio[:200000]
+          
             
             normalIndex , numofPoints =fn.bandLength(freq)  # get index of slider in how point will change when move slider 
             for i in range(10):
@@ -79,9 +78,9 @@ else:
 #------------------------------------ MUSIC -----------------------------------------
 
         elif radio_button == "Music":
-            names_list = [(0,5,1),(0,5,1),(0,5,1),(0,5,1)]
+          
             label= [" Drums","base guitar" , "piano" ,"guitar"]
-                #audio = audio[:200000]
+           
             sliders =fn.creating_new_slider(label)
             
             points_per_freq = np.ceil(len(freq) / (samplfreq / 2) )  # number of points per  frequancy 
@@ -97,8 +96,7 @@ else:
 # -------------------------------------------------  Vowels  ----------------------------------
 
         elif radio_button == "Vowels":
-            names_list = [(0,5,1),(0,5,1),(0,5,1),(0,5,1)]
-            label= ["A","B", 'C', 'D']
+            label= ["O","R", 'H', 'L']
             sliders =fn.creating_new_slider(label)
             frequencies = [100, 1900, 3000, 3700, 4090]
             startIndex, numpoints = fn.get_data(samplfreq,freq,frequencies,len(label))
@@ -131,11 +129,13 @@ else:
         fig2 = plt.figure(figsize=(5, 1.5))
         plt.specgram(new_sig, Fs=samplfreq, vmin=-20, vmax=50)
         plt.colorbar()
-        start_btn_col ,stop_btn_col =st.sidebar.columns(2)
+        start_btn_col ,stop_btn_col,reset_btn_col =st.sidebar.columns(3)
         with start_btn_col:
             start_btn = st.button('Start') 
         with stop_btn_col:
             stop_btn =st.button('stop')
+        with reset_btn_col:
+            reset_btn =st.button('reset')
         # Plot Animation
         before_col,after_col=st.columns(2)
         with before_col:
@@ -178,6 +178,9 @@ else:
             lines1 = animation.plot_animation(step_df1)
             line_plot_befor  = line_plot_before.altair_chart(lines)
             line_plot_after= line_plot_after.altair_chart(lines1) 
+        if reset_btn_col:
+            st.session_state['size'] =0
+            st.session_state['counter'] = 0
 # ----------------------- Medical ------------------------------------------------------- # 
     elif radio_button == "Medical":
         label= ["Bradycardia","Techycardia","Normal","Atrial Flutter","Atrial"]
@@ -195,11 +198,13 @@ else:
         figure2= plt.figure(figsize=(4,1.5))
         plt.specgram( abs(y_inverse_fourier[:300]))
         plt.colorbar()
-        start_btn_col ,stop_btn_col =st.sidebar.columns(2)
+        start_btn_col ,stop_btn_col,reset_btn_col =st.sidebar.columns(3)
         with start_btn_col:
             start_btn = st.button('Start') 
         with stop_btn_col:
             stop_btn =st.button('stop')
+        with reset_btn_col:
+            reset_btn =st.button('reset')
         # Plot Animation
         before_col,after_col=st.columns(2)
         with before_col:
@@ -245,4 +250,6 @@ else:
             lines1 = animation.plot_animation(step_df1)
             line_plot_befor  = line_plot_before.altair_chart(lines)
             line_plot_after= line_plot_after.altair_chart(lines1)             
-    
+        if reset_btn_col:
+            st.session_state['size'] =0
+            st.session_state['counter'] = 0

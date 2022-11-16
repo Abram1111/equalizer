@@ -40,38 +40,27 @@ def ECG(df,sliders ):
     data = pd.DataFrame({'time':time, 'amplitude':magnitude }, columns=['time', 'amplitude'])
     data2 = pd.DataFrame({'time':time, 'amplitude':y_inverse_fourier }, columns=['time', 'amplitude'])
     
-    # # Create subplot
-    # figure, axis= plt.subplots()
-    # axis.plot(df_x_axis[50:350],Actual_signal[50:350],label="The Actual Data")
-    # axis.plot(df_x_axis[50:350], y_inverse_fourier[50:350],label="After remove arrhythima ")
-    # axis.set_xlabel('Time')
-    # axis.set_ylabel('Amplitude')
-    # st.plotly_chart(figure,use_container_width=True)
-    # #  plot spectrogram 
-    # fig2= plt.figure(figsize=(9, 3.5))
-    # plt.specgram( abs(Actual_signal[:300]))
-    # plt.colorbar()
-    # st.pyplot(fig2)
+ 
     
     return magnitude , y_inverse_fourier,data, data2
 
 #  ----------------------------------- CREATING SLIDERS ---------------------------------------------------------------
-def creating_sliders(names_list,label):
-    columns = st.columns(10)
-    sliders_values = []
-    sliders = {}
+# def creating_sliders(names_list,label):
+#     columns = st.columns(10)
+#     sliders_values = []
+#     sliders = {}
 
-    for index, tuple in enumerate(names_list): 
+#     for index, tuple in enumerate(names_list): 
       
-        key = f'member{str(index)}'
+#         key = f'member{str(index)}'
 
-        with columns[index]:
-            sliders[f'slidergroup{key}'] = svs.vertical_slider(key=key, default_value=tuple[2], step=0.1, min_value=tuple[0], max_value=tuple[1],slider_color="rgb(255, 75, 75)", thumb_color="rgb(255, 75, 75)")
-            if sliders[f'slidergroup{key}'] == None:
-                sliders[f'slidergroup{key}'] = tuple[2]
-            sliders_values.append(( sliders[f'slidergroup{key}']))
-            st.write(label[index])
-    return sliders_values
+#         with columns[index]:
+#             sliders[f'slidergroup{key}'] = svs.vertical_slider(key=key, default_value=tuple[2], step=0.1, min_value=tuple[0], max_value=tuple[1],slider_color="rgb(255, 75, 75)", thumb_color="rgb(255, 75, 75)")
+#             if sliders[f'slidergroup{key}'] == None:
+#                 sliders[f'slidergroup{key}'] = tuple[2]
+#             sliders_values.append(( sliders[f'slidergroup{key}']))
+#             st.write(label[index])
+#     return sliders_values
 
 #  --------------------------   FOURIER TRANSFORM FOR  Wave       ----------------------------------------
 #  Data is 1-D for 1-channel WAV, or 2-D of shape (Nsamples, Nchannels)
