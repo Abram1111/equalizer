@@ -129,3 +129,14 @@ def creating_new_slider(label):
             sliders_values.append(slider)
             st.write(label[index])
     return sliders_values
+#-----------------------------------------------------------------------------------------------------------------
+def get_data(sr, freq, desired_freq, label_len):
+    numpoints = []
+    startIndex = []
+    points_per_freq = np.ceil(len(freq) / (sr / 2) )  # number of points per  frequancy 
+    points_per_freq = int(points_per_freq)
+    frequencies = [0, 500, 1000, 2000, 5000]
+    for i in range(label_len):
+            numpoints.insert(i,np.abs(frequencies[i] * points_per_freq - frequencies[i+1] * points_per_freq))
+            startIndex.insert(i,frequencies[i] * points_per_freq)
+    return startIndex, numpoints

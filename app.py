@@ -97,8 +97,11 @@ else:
 # -------------------------------------------------  Vowels  ----------------------------------
 
         elif radio_button == "Vowels":
-            label= ["0:100","100:200"]
+            names_list = [(0,5,1),(0,5,1),(0,5,1),(0,5,1)]
+            label= ["A","B", 'C', 'D']
             sliders =fn.creating_new_slider(label)
+            frequencies = [100, 1900, 3000, 3700, 4090]
+            startIndex, numpoints = fn.get_data(samplfreq,freq,frequencies,len(label))
 # ------------------------------------------------- END Vowels  ---------------------------------
         elif radio_button=="Optional":      
             mag,sr =librosa.load(file_uploaded.name)
