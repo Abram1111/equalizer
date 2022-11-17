@@ -126,20 +126,30 @@ max-width: 30px !important;
     left: calc(50% - 300px);
     transform: translateY(300px);
 }
-.before , .after{
-    font-size: x-large;
-    margin-top: 20px;
-}
 [data-testid="stArrowVegaLiteChart"]{
     max-height: 100px;
 }
-/* [data-testid="stHeader"]{
+[data-testid="stHeader"]{
     display: none;
-} */
+}
 [data-testid="stMarkdownContainer"]{
-  text-align: center;
-  margin-top: -70px;
+    text-align: center;
+    /* margin-top: -70px; */
 }
 iframe{
-    margin-top: -50px;
+    margin-top: -30px;
+}
+[data-testid="stMarkdownContainer"] p:not(.before , .after , .error){
+    margin-top: -70px;
+}
+.before , .after{
+    font-size: x-large;
+    margin-top: 0px;
+}
+.error{
+    background-color: rgba(255, 43, 43, 0.09);
+    font-size: larger;
+}
+.css-1q1n0ol.egzxvld0{
+    display: none;
 }

@@ -35,13 +35,15 @@ def read_audio(audio_file):
     return signal_x_axis, signal_y_axis, sample_rate,  sound_info
 # Plot a Chart
 def plot_animation(df):
+    brush = alt.selection_interval()
     lines = alt.Chart(df).mark_line().encode(
         x=alt.X('time', axis=alt.Axis(title='time')),
         y=alt.Y('amplitude', axis=alt.Axis(title='amplitude')),
     ).properties(
         width=500,
         height=200
-    )
+    ).add_selection(
+        brush).interactive()
     return lines
 
 

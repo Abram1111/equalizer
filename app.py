@@ -39,31 +39,38 @@ optional =  False
 file_uploaded = st.sidebar.file_uploader("")
 
 radio_button = st.sidebar.radio("", ["Normal", "Music", "Vowels", "Medical","Optional"], horizontal=False)
+
+before_col,after_col=st.columns(2)
 if "size" not in st.session_state:
     st.session_state['size'] = 0
 if "counter" not in st.session_state:
     st.session_state['counter'] = 0
 if file_uploaded==None:
-    welcome_text = '<p class="page_titel", style="font-family:Arial">Please upload file </p>'
-    st.markdown(welcome_text, unsafe_allow_html=True)
+    # welcome_text = '<p class="page_titel", style="font-family:Arial">Please upload file </p>'
+    # st.markdown(welcome_text, unsafe_allow_html=True)
+    name="singnal.wav"
+    type="audio/wav"
+    
 
-else:
-    if radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowels" or radio_button =="Optional" :
-        signal_x_axis_before, signal_y_axis_before, sample_rate_before ,sound_info_before = animation.read_audio(file_uploaded)
-        
-        #
+
+if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowels" or radio_button =="Optional"):
+    if file_uploaded !=None:
+            name=file_uploaded.name
+            type = file_uploaded.type
+    if type=="audio/wav":
+        signal_x_axis_before, signal_y_axis_before, sample_rate_before ,sound_info_before = animation.read_audio(name)
         df = pd.DataFrame({'time': signal_x_axis_before[::500], 'amplitude': signal_y_axis_before[:: 500]}, columns=['time', 'amplitude'])
-        lines = alt.Chart(df).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
-                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
-        samplfreq, audio = wavfile.read(file_uploaded.name)  
+        lines = alt.Chart(df).mark_line().encode( x=alt.X('time', axis=alt.Axis(title='time')),
+                                                y=alt.Y('amplitude', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
+        # st.write(file_uploaded)
+        samplfreq, audio = wavfile.read(name)  
         magnitude , freq=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
         if radio_button == "Normal":
-            # slider min and max 
-            # slider labels
-            label= ["1kHz","2kHz","3kHz","4kHz","5kHz","6kHz","7kHz","8kHz","9kHz","10kHz"]
+            index = magnitude.argmax()
+            label= ["{}Hz".format(500),"{}Hz".format(1000),"{}Hz".format(1500),"{}Hz".format(2000),"{}Hz".format(2500),"{}Hz".format(3000),"{}Hz".format(3500),"{}Hz".format(4000),"{}Hz".format(4500),"{}Hz".format(5000)]
             # read file          
             sliders =fn.creating_new_slider(label)
-          
+        
             
             normalIndex , numofPoints =fn.bandLength(freq)  # get index of slider in how point will change when move slider 
             for i in range(10):
@@ -78,9 +85,9 @@ else:
 #------------------------------------ MUSIC -----------------------------------------
 
         elif radio_button == "Music":
-          
+        
             label= [" Drums","base guitar" , "piano" ,"guitar"]
-           
+        
             sliders =fn.creating_new_slider(label)
             
             points_per_freq = np.ceil(len(freq) / (samplfreq / 2) )  # number of points per  frequancy 
@@ -96,7 +103,7 @@ else:
 # -------------------------------------------------  Vowels  ----------------------------------
 
         elif radio_button == "Vowels":
-            label= ["O","R", 'H', 'L']
+            label= ["sh","S", 'I', 'E']
             sliders =fn.creating_new_slider(label)
             frequencies = [100, 1900, 3000, 3700, 4090]
             startIndex, numpoints = fn.get_data(samplfreq,freq,frequencies,len(label))
@@ -123,8 +130,8 @@ else:
             write("convertWave4.wav", samplfreq, norm_new_sig)
         signal_x_axis_after, signal_y_axis_after, sample_rate_after ,sound_info_after = animation.read_audio("convertWave4.wav")    # Read Audio File
         df1 = pd.DataFrame({'time': signal_x_axis_after[::500], 'amplitude': signal_y_axis_after[:: 500]}, columns=['time', 'amplitude'])
-        lines1 = alt.Chart(df).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
-                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
+        lines1 = alt.Chart(df1).mark_line().encode( x=alt.X('time', axis=alt.Axis(title='time')),
+                                                y=alt.Y('amplitude', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
 
         fig2 = plt.figure(figsize=(5, 1.5))
         plt.specgram(new_sig, Fs=samplfreq, vmin=-20, vmax=50)
@@ -137,11 +144,11 @@ else:
         with reset_btn_col:
             reset_btn =st.button('reset')
         # Plot Animation
-        before_col,after_col=st.columns(2)
+        
         with before_col:
             before_text = '<p class="before", style="font-family:Arial"> before </p>'
             st.markdown(before_text, unsafe_allow_html=True)
-            st.audio(file_uploaded)
+            st.audio(name)
             line_plot_before = st.altair_chart(lines)
             st.pyplot(fig_befor_spacrto)
         with after_col:
@@ -151,13 +158,13 @@ else:
             line_plot_after= st.altair_chart(lines1)
             st.pyplot(fig2)
         N = df.shape[0]  # number of elements in the dataframe
-        burst = 6        # number of elements (months) to add to the plot
+        burst = int(len(df1)/4)       # number of elements (months) to add to the plot
         size = burst     # size of the current dataset 
         if start_btn:
-            for i in range(1, N):
+            for i in range(st.session_state["size"]+burst, N - burst):
                 i=st.session_state['counter']
-                step_df  = df.iloc[0:st.session_state['size']]
-                step_df1 = df1.iloc[0:st.session_state['size']]
+                step_df  = df.iloc[i:st.session_state['size']]
+                step_df1 = df1.iloc[i:st.session_state['size']]
 
                 lines  = animation.plot_animation(step_df)
                 lines1 = animation.plot_animation(step_df1)
@@ -172,8 +179,8 @@ else:
                 time.sleep(.00000000001)
                 st.session_state['counter'] += 1
         if stop_btn:
-            step_df  = df.iloc[0:st.session_state['size']]
-            step_df1 = df1.iloc[0:st.session_state['size']]
+            step_df  = df.iloc[st.session_state['counter']:st.session_state['size']]
+            step_df1 = df1.iloc[st.session_state['counter']:st.session_state['size']]
             lines  = animation.plot_animation(step_df)
             lines1 = animation.plot_animation(step_df1)
             line_plot_befor  = line_plot_before.altair_chart(lines)
@@ -181,17 +188,21 @@ else:
         if reset_btn_col:
             st.session_state['size'] =0
             st.session_state['counter'] = 0
+    else:
+        error_text = '<p class="error", style="font-family:Arial"> The format is invalid, please make sure that the file is in wav format </p>'
+        st.markdown(error_text, unsafe_allow_html=True)
 # ----------------------- Medical ------------------------------------------------------- # 
-    elif radio_button == "Medical":
-        label= ["Bradycardia","Techycardia","Normal","Atrial Flutter","Atrial"]
+elif radio_button == "Medical":
+    label= ["Bradycardia","Normal","Techycardia","Atrial Flutter","Atrial"]
+    if(file_uploaded.type == "text/csv"):
         sliders =fn.creating_new_slider(label)
         df = pd.read_csv(file_uploaded)
         Actual_signal, y_inverse_fourier,data, data2 = fn.ECG(df,sliders)
         
-        lines = alt.Chart(data).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
-                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
-        lines_1 = alt.Chart(data2).mark_line().encode( x=alt.X('0:T', axis=alt.Axis(title='time')),
-                                                y=alt.Y('1:Q', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
+        lines = alt.Chart(data).mark_line().encode( x=alt.X('time', axis=alt.Axis(title='time')),
+                                                y=alt.Y('amplitude', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
+        lines_1 = alt.Chart(data2).mark_line().encode( x=alt.X('time', axis=alt.Axis(title='time')),
+                                                y=alt.Y('amplitude', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
         figure1= plt.figure(figsize=(4,1.5))
         plt.specgram( abs(Actual_signal[:300]))
         plt.colorbar()
@@ -206,7 +217,7 @@ else:
         with reset_btn_col:
             reset_btn =st.button('reset')
         # Plot Animation
-        before_col,after_col=st.columns(2)
+        # before_col,after_col=st.columns(2)
         with before_col:
             before_text = '<p class="before", style="font-family:Arial"> before </p>'
             st.markdown(before_text, unsafe_allow_html=True)
@@ -253,3 +264,7 @@ else:
         if reset_btn_col:
             st.session_state['size'] =0
             st.session_state['counter'] = 0
+    else:
+        error_text = '<p class="error", style="font-family:Arial"> The format is invalid, please make sure that the file is in CSV format </p>'
+        st.markdown(error_text, unsafe_allow_html=True)
+        
