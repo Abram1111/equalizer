@@ -45,6 +45,8 @@ if "size" not in st.session_state:
     st.session_state['size'] = 0
 if "counter" not in st.session_state:
     st.session_state['counter'] = 0
+if "btn_state" not in st.session_state:
+    st.session_state['btn_state'] = 0
 if file_uploaded==None:
     # welcome_text = '<p class="page_titel", style="font-family:Arial">Please upload file </p>'
     # st.markdown(welcome_text, unsafe_allow_html=True)
@@ -66,12 +68,9 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
         samplfreq, audio = wavfile.read(name)  
         magnitude , freq=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
         if radio_button == "Normal":
-            index = magnitude.argmax()
             label= ["{}Hz".format(500),"{}Hz".format(1000),"{}Hz".format(1500),"{}Hz".format(2000),"{}Hz".format(2500),"{}Hz".format(3000),"{}Hz".format(3500),"{}Hz".format(4000),"{}Hz".format(4500),"{}Hz".format(5000)]
             # read file          
             sliders =fn.creating_new_slider(label)
-        
-            
             normalIndex , numofPoints =fn.bandLength(freq)  # get index of slider in how point will change when move slider 
             for i in range(10):
                 if i<9: 
@@ -136,13 +135,6 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
         fig2 = plt.figure(figsize=(5, 1.5))
         plt.specgram(new_sig, Fs=samplfreq, vmin=-20, vmax=50)
         plt.colorbar()
-        start_btn_col ,stop_btn_col,reset_btn_col =st.sidebar.columns(3)
-        with start_btn_col:
-            start_btn = st.button('Start') 
-        with stop_btn_col:
-            stop_btn =st.button('stop')
-        with reset_btn_col:
-            reset_btn =st.button('reset')
         # Plot Animation
         
         with before_col:
@@ -157,10 +149,19 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
             st.audio("convertWave4.wav" )
             line_plot_after= st.altair_chart(lines1)
             st.pyplot(fig2)
+        start_btn_col,reset_btn_col =st.sidebar.columns(2)
+        with start_btn_col:
+            placeholder=st.empty()
+            start_btn =  placeholder.button('Start')
+        with reset_btn_col:
+            reset_btn =st.button('reset')
         N = df.shape[0]  # number of elements in the dataframe
         burst = int(len(df1)/4)       # number of elements (months) to add to the plot
         size = burst     # size of the current dataset 
-        if start_btn:
+        if start_btn  and st.session_state["btn_state"]==0:
+            st.session_state['btn_state']=1
+            placeholder.empty()
+            start_btn=placeholder.button('Pause')
             for i in range(st.session_state["size"]+burst, N - burst):
                 i=st.session_state['counter']
                 step_df  = df.iloc[i:st.session_state['size']]
@@ -178,7 +179,8 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
                     st.session_state['size'] = N - 1
                 time.sleep(.00000000001)
                 st.session_state['counter'] += 1
-        if stop_btn:
+        if  st.session_state["btn_state"]==1:
+            st.session_state["btn_state"]=0
             step_df  = df.iloc[st.session_state['counter']:st.session_state['size']]
             step_df1 = df1.iloc[st.session_state['counter']:st.session_state['size']]
             lines  = animation.plot_animation(step_df)
@@ -209,11 +211,10 @@ elif radio_button == "Medical":
         figure2= plt.figure(figsize=(4,1.5))
         plt.specgram( abs(y_inverse_fourier[:300]))
         plt.colorbar()
-        start_btn_col ,stop_btn_col,reset_btn_col =st.sidebar.columns(3)
+        start_btn_col ,reset_btn_col =st.sidebar.columns(2)
         with start_btn_col:
-            start_btn = st.button('Start') 
-        with stop_btn_col:
-            stop_btn =st.button('stop')
+            placeholder=st.empty()
+            start_btn =  placeholder.button('Start')
         with reset_btn_col:
             reset_btn =st.button('reset')
         # Plot Animation
@@ -230,13 +231,12 @@ elif radio_button == "Medical":
             st.pyplot(figure2)
             
         N = data.shape[0] # number of elements in the dataframe
-        burst = 6         # number of elements (months) to add to the plot
+        burst = int(len(data2)/4)       # number of elements (months) to add to the plot
         size = burst      # size of the current dataset 
-        if "size" not in st.session_state:
-            st.session_state['size'] = size
-        if "counter" not in st.session_state:
-            st.session_state['counter'] = 0
-        if start_btn:
+        if start_btn  and st.session_state["btn_state"]==0:
+            st.session_state['btn_state']=1
+            placeholder.empty()
+            start_btn=placeholder.button('Pause')
             for i in range(1, N):
                 i=st.session_state['counter']
                 step_df  = data.iloc[0:st.session_state['size']]
@@ -254,7 +254,8 @@ elif radio_button == "Medical":
                     st.session_state['size'] = N - 1
                 time.sleep(.00000000001)
                 st.session_state['counter'] += 1
-        if stop_btn:
+        if  st.session_state["btn_state"]==1:
+            st.session_state["btn_state"]=0
             step_df  = data.iloc[0:st.session_state['size']]
             step_df1 = data2.iloc[0:st.session_state['size']]
             lines  = animation.plot_animation(step_df)
