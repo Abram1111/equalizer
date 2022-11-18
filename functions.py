@@ -114,16 +114,20 @@ def creating_new_slider(label):
             st.write(label[index])
     return sliders_values
 #-----------------------------------------------------------------------------------------------------------------
-[[[900, 9300]], [[100, 2200], [3950, 7450], [12000, 15000]], [[300, 900], [2600, 20000]], [[1200, 500]]]
+[[[900, 9300]], [[100, 2200], [3950, 7450], [12000, 15000]], [[300, 900], [2600, 20000]], [[900, 9300]]]
 def Vowels(points_per_freq, sliders, frequencies, fourier_frequency):
     vowel = ["sh","M", 'D', 'R']
     for i in range(len(frequencies)):
         # print(frequencies[i][i])
         for j in range(len(frequencies[i])):
-            print(vowel[i],frequencies[i][j][0])
-            print(vowel[i],frequencies[i][j][1])
+            # print(vowel[i],frequencies[i][j][0])
+            # print(vowel[i],frequencies[i][j][1])
             signal = fourier_frequency[int(points_per_freq * frequencies[i][j][0]):int(points_per_freq*frequencies[i][j][1])]
             triangle_window = scipy.signal.windows.triang(len(signal))
-            value = 10**(sliders[i]*-10000* triangle_window)
+            
+            if sliders[i]<1:
+                value = 10**(-100000* triangle_window)    
+            else:
+                value = 10 ** ((sliders[i] / 10) * triangle_window)
             fourier_frequency[int(points_per_freq * frequencies[i][j][0]):int(points_per_freq*frequencies[i][j][1])] *= value
     return fourier_frequency

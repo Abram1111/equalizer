@@ -51,14 +51,13 @@ if file_uploaded==None:
     # welcome_text = '<p class="page_titel", style="font-family:Arial">Please upload file </p>'
     # st.markdown(welcome_text, unsafe_allow_html=True)
     name="singnal.wav"
-    type="audio/wav"
-    
-
+    type="audio/wav"    
+else:
+    name=file_uploaded.name
+    type = file_uploaded.type
 
 if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowels" or radio_button =="Optional"):
-    if file_uploaded !=None:
-            name=file_uploaded.name
-            type = file_uploaded.type
+  
     if type=="audio/wav":
         signal_x_axis_before, signal_y_axis_before, sample_rate_before ,sound_info_before = animation.read_audio(name)
         df = pd.DataFrame({'time': signal_x_axis_before[::500], 'amplitude': signal_y_axis_before[:: 500]}, columns=['time', 'amplitude'])
@@ -104,9 +103,8 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
         elif radio_button == "Vowels":
             label= ["sh","M", 'D', 'R']
             sliders =fn.creating_new_slider(label)
-            frequencies = [[[900, 9300]], [[100, 2200], [3950, 7450], [12000, 15000]], [[100, 900], [1800, 20000]], [[1200, 500]]]
+            frequencies = [[[900, 9300]], [[100, 2200], [3950, 7450], [12000, 15000]], [[100, 900], [1800, 20000]], [[1200, 5000]]]
             # startIndex, numpoints = fn.get_data(samplfreq,freq,frequencies,len(label))
-            print(frequencies[1][0])
 # ------------------------------------------------- END Vowels  ---------------------------------
         elif radio_button=="Optional":      
             label=["wolf", "bird"]
@@ -202,9 +200,9 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
 # ----------------------- Medical ------------------------------------------------------- # 
 elif radio_button == "Medical":
     label= ["Bradycardia","Normal","Techycardia","Atrial Flutter","Atrial"]
-    if(file_uploaded.type == "text/csv"):
+    if(type == "text/csv"):
         sliders =fn.creating_new_slider(label)
-        df = pd.read_csv(file_uploaded)
+        df = pd.read_csv(name)
         Actual_signal, y_inverse_fourier,data, data2 = fn.ECG(df,sliders)
         
         lines = alt.Chart(data).mark_line().encode( x=alt.X('time', axis=alt.Axis(title='time')),
