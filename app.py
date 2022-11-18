@@ -179,6 +179,7 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
                     st.session_state['size'] = N - 1
                 time.sleep(.00000000001)
                 st.session_state['counter'] += 1
+        
         if  st.session_state["btn_state"]==1:
             st.session_state["btn_state"]=0
             step_df  = df.iloc[st.session_state['counter']:st.session_state['size']]
@@ -190,6 +191,7 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
         if reset_btn_col:
             st.session_state['size'] =0
             st.session_state['counter'] = 0
+            st.session_state["btn_state"]=0
     else:
         error_text = '<p class="error", style="font-family:Arial"> The format is invalid, please make sure that the file is in wav format </p>'
         st.markdown(error_text, unsafe_allow_html=True)
@@ -265,6 +267,7 @@ elif radio_button == "Medical":
         if reset_btn_col:
             st.session_state['size'] =0
             st.session_state['counter'] = 0
+            st.session_state["btn_state"]=0
     else:
         error_text = '<p class="error", style="font-family:Arial"> The format is invalid, please make sure that the file is in CSV format </p>'
         st.markdown(error_text, unsafe_allow_html=True)
