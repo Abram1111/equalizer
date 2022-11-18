@@ -84,19 +84,21 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
 #------------------------------------ MUSIC -----------------------------------------
 
         elif radio_button == "Music":
-        
-            label= [" Drums","base guitar" , "piano" ,"guitar"]
+            
+            # drums from 0 to  500 hz 
+            #  piano from 500 to 2000 
+            #  guiter from  200 to  7000 
+            label= [" Drums","piano" ,"guitar"]
         
             sliders =fn.creating_new_slider(label)
             
             points_per_freq = np.ceil(len(freq) / (samplfreq / 2) )  # number of points per  frequancy 
             points_per_freq = int(points_per_freq)
-            frequencies = [0, 500, 1000, 2000, 5000]
+            frequencies = [0, 500,  2000, 7000]
             for i in range(len(label)):
                     numpoints.insert(i,np.abs(frequencies[i] * points_per_freq - frequencies[i+1] * points_per_freq))
                     startIndex.insert(i,frequencies[i] * points_per_freq)
-            
-
+ 
 # ------------------------------------------------- END MUSIC  --------------------------------
 
 # -------------------------------------------------  Vowels  ----------------------------------
