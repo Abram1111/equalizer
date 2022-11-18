@@ -66,7 +66,9 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
                                                 y=alt.Y('amplitude', axis=alt.Axis(title='amplitude'))).properties(width=500,height=200)
         # st.write(file_uploaded)
         samplfreq, audio = wavfile.read(name)  
-        magnitude , freq=fn.fourierTansformWave(audio ,samplfreq)   # convert to fft
+        magnitude , freq=fn.fourierTansformWave(audio ,samplfreq)  
+        points_per_freq = np.ceil(len(freq) / (samplfreq / 2) )  # number of points per  frequancy 
+        points_per_freq = int(points_per_freq) # convert to fft
         if radio_button == "Normal":
             label= ["{}Hz".format(500),"{}Hz".format(1000),"{}Hz".format(1500),"{}Hz".format(2000),"{}Hz".format(2500),"{}Hz".format(3000),"{}Hz".format(3500),"{}Hz".format(4000),"{}Hz".format(4500),"{}Hz".format(5000)]
             # read file          
@@ -89,11 +91,7 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
             #  piano from 500 to 2000 
             #  guiter from  200 to  7000 
             label= [" Drums","piano" ,"guitar"]
-        
             sliders =fn.creating_new_slider(label)
-            
-            points_per_freq = np.ceil(len(freq) / (samplfreq / 2) )  # number of points per  frequancy 
-            points_per_freq = int(points_per_freq)
             frequencies = [0, 500,  2000, 7000]
             for i in range(len(label)):
                     numpoints.insert(i,np.abs(frequencies[i] * points_per_freq - frequencies[i+1] * points_per_freq))
@@ -110,14 +108,8 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
             startIndex, numpoints = fn.get_data(samplfreq,freq,frequencies,len(label))
 # ------------------------------------------------- END Vowels  ---------------------------------
         elif radio_button=="Optional":      
-            # mag,sr =librosa.load(file_uploaded.name)
-            # new_sig = librosa.effects.pitch_shift(mag,sr=sr,n_steps=-5)
-            # sf.write('convertWave4.wav',new_sig,sr)
-            # new_sig = fn.SPectrogram()
             label=["wolf", "bird"]
             sliders =fn.creating_new_slider(label)
-            points_per_freq = np.ceil(len(freq) / (samplfreq / 2) )  # number of points per  frequancy 
-            points_per_freq = int(points_per_freq)
             frequencies=[400,2500,20000]
             for i in range(len(label)):
                     numpoints.insert(i,np.abs(frequencies[i] * points_per_freq - frequencies[i+1] * points_per_freq))
@@ -131,8 +123,6 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
         plt.colorbar()
         
         #end plot spactro (before)
-        
-        
         magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))
         new_sig = irfft(magnitude)
         norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
