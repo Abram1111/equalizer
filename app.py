@@ -110,10 +110,18 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
             startIndex, numpoints = fn.get_data(samplfreq,freq,frequencies,len(label))
 # ------------------------------------------------- END Vowels  ---------------------------------
         elif radio_button=="Optional":      
-            mag,sr =librosa.load(file_uploaded.name)
-            new_sig = librosa.effects.pitch_shift(mag,sr=sr,n_steps=-5)
-            sf.write('convertWave4.wav',new_sig,sr)
-            new_sig = fn.SPectrogram()
+            # mag,sr =librosa.load(file_uploaded.name)
+            # new_sig = librosa.effects.pitch_shift(mag,sr=sr,n_steps=-5)
+            # sf.write('convertWave4.wav',new_sig,sr)
+            # new_sig = fn.SPectrogram()
+            label=["wolf", "bird"]
+            sliders =fn.creating_new_slider(label)
+            points_per_freq = np.ceil(len(freq) / (samplfreq / 2) )  # number of points per  frequancy 
+            points_per_freq = int(points_per_freq)
+            frequencies=[400,2500,20000]
+            for i in range(len(label)):
+                    numpoints.insert(i,np.abs(frequencies[i] * points_per_freq - frequencies[i+1] * points_per_freq))
+                    startIndex.insert(i,frequencies[i] * points_per_freq)
             
         magnitude_spactro=magnitude
         spectrogramOrigin = irfft(magnitude_spactro)
@@ -124,11 +132,11 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
         
         #end plot spactro (before)
         
-        if radio_button!="Optional":
-            magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))
-            new_sig = irfft(magnitude)
-            norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
-            write("convertWave4.wav", samplfreq, norm_new_sig)
+        
+        magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))
+        new_sig = irfft(magnitude)
+        norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
+        write("convertWave4.wav", samplfreq, norm_new_sig)
         signal_x_axis_after, signal_y_axis_after, sample_rate_after ,sound_info_after = animation.read_audio("convertWave4.wav")    # Read Audio File
         df1 = pd.DataFrame({'time': signal_x_axis_after[::500], 'amplitude': signal_y_axis_after[:: 500]}, columns=['time', 'amplitude'])
         lines1 = alt.Chart(df1).mark_line().encode( x=alt.X('time', axis=alt.Axis(title='time')),
