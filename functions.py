@@ -11,7 +11,7 @@ import matplotlib as mpl
 from scipy import signal
 import streamlit.components.v1 as components
 import os
-
+import scipy.signal
 
 
 
@@ -114,13 +114,16 @@ def creating_new_slider(label):
             st.write(label[index])
     return sliders_values
 #-----------------------------------------------------------------------------------------------------------------
-def get_data(sr, freq, desired_freq, label_len):
-    numpoints = []
-    startIndex = []
-    points_per_freq = np.ceil(len(freq) / (sr / 2) )  # number of points per  frequancy 
-    points_per_freq = int(points_per_freq)
-    frequencies = [0, 500, 1000, 2000, 5000]
-    for i in range(label_len):
-            numpoints.insert(i,np.abs(frequencies[i] * points_per_freq - frequencies[i+1] * points_per_freq))
-            startIndex.insert(i,frequencies[i] * points_per_freq)
-    return startIndex, numpoints
+[[[900, 9300]], [[100, 2200], [3950, 7450], [12000, 15000]], [[300, 900], [2600, 20000]], [[1200, 500]]]
+def Vowels(points_per_freq, sliders, frequencies, fourier_frequency):
+    vowel = ["sh","M", 'D', 'R']
+    for i in range(len(frequencies)):
+        # print(frequencies[i][i])
+        for j in range(len(frequencies[i])):
+            print(vowel[i],frequencies[i][j][0])
+            print(vowel[i],frequencies[i][j][1])
+            signal = fourier_frequency[int(points_per_freq * frequencies[i][j][0]):int(points_per_freq*frequencies[i][j][1])]
+            triangle_window = scipy.signal.windows.triang(len(signal))
+            value = 10**(sliders[i]*-10000* triangle_window)
+            fourier_frequency[int(points_per_freq * frequencies[i][j][0]):int(points_per_freq*frequencies[i][j][1])] *= value
+    return fourier_frequency

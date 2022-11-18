@@ -102,10 +102,11 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
 # -------------------------------------------------  Vowels  ----------------------------------
 
         elif radio_button == "Vowels":
-            label= ["sh","S", 'I', 'E']
+            label= ["sh","M", 'D', 'R']
             sliders =fn.creating_new_slider(label)
-            frequencies = [100, 1900, 3000, 3700, 4090]
-            startIndex, numpoints = fn.get_data(samplfreq,freq,frequencies,len(label))
+            frequencies = [[[900, 9300]], [[100, 2200], [3950, 7450], [12000, 15000]], [[100, 900], [1800, 20000]], [[1200, 500]]]
+            # startIndex, numpoints = fn.get_data(samplfreq,freq,frequencies,len(label))
+            print(frequencies[1][0])
 # ------------------------------------------------- END Vowels  ---------------------------------
         elif radio_button=="Optional":      
             label=["wolf", "bird"]
@@ -123,7 +124,10 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
         plt.colorbar()
         
         #end plot spactro (before)
-        magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))
+        if(radio_button == "Vowels"):
+            magnitude = fn.Vowels(points_per_freq, sliders, frequencies, magnitude)
+        else:
+            magnitude=fn.modify_wave(magnitude , numpoints , startIndex , sliders, len(label))
         new_sig = irfft(magnitude)
         norm_new_sig = np.int16(new_sig * (32767 / new_sig.max()))
         write("convertWave4.wav", samplfreq, norm_new_sig)
