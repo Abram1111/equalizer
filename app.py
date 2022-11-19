@@ -103,7 +103,7 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
         elif radio_button == "Vowels":
             label= ["sh","O", 'D', 'R']
             sliders =fn.creating_new_slider(label)
-            frequencies = [[[900, 9300]], [[10, 2300]], [[100, 900], [1800, 20000]], [[1200, 5000]]]
+            frequencies = [[[900, 9300]], [[10, 2300]], [[100, 600], [2000, 4000]], [[1200, 5000]]]
             # startIndex, numpoints = fn.get_data(samplfreq,freq,frequencies,len(label))
 # ------------------------------------------------- END Vowels  ---------------------------------
         elif radio_button=="Optional":      
