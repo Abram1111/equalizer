@@ -109,7 +109,7 @@ if (radio_button == "Music" or radio_button == "Normal" or radio_button == "Vowe
         elif radio_button=="Optional":      
             label=["wolf", "bird"]
             sliders =fn.creating_new_slider(label)
-            frequencies=[400,2500,20000]
+            frequencies=[200,2500,20000]
             for i in range(len(label)):
                     numpoints.insert(i,np.abs(frequencies[i] * points_per_freq - frequencies[i+1] * points_per_freq))
                     startIndex.insert(i,frequencies[i] * points_per_freq)

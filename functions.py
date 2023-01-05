@@ -128,6 +128,6 @@ def Vowels(points_per_freq, sliders, frequencies, fourier_frequency):
             if sliders[i]<1:
                 value = 10**(-100000* triangle_window)    
             else:
-                value = 10 ** ((sliders[i] / 10) * triangle_window)
+                value = 10 ** (((sliders[i]-1) / 10) * triangle_window)
             fourier_frequency[int(points_per_freq * frequencies[i][j][0]):int(points_per_freq*frequencies[i][j][1])] *= value
     return fourier_frequency
